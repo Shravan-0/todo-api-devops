@@ -32,12 +32,15 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                sh 'mvn package -DskipTests'
             }
         }
     }
 
     post {
+        always {
+            junit 'target/surefire-reports/*.xml'
+        }
         success {
             archiveArtifacts artifacts: 'target/*.jar',
                              fingerprint: true
