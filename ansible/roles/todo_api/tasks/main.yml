@@ -1,0 +1,49 @@
+- name: Install Java 17 runtime
+  become: true
+  apt:
+    name: openjdk-17-jre-headless
+    state: present
+    update_cache: yes
+
+- name: Create application user
+  become: true
+  user:
+    name: "{{ app_user }}"
+    system: yes
+    shell: /usr/sbin/nologin
+    create_home: no
+
+- name: Create application directory
+  become: true
+  file:
+    path: "{{ app_directory }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0755'
+
+- name: Copy application JAR
+  become: true
+  copy:
+    src: "{{ jar_source }}"
+    dest: "{{ app_directory }}/todo-api.jar"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: '0644'
+  notify: Restart Todo API
+
+- name: Configure systemd service
+  become: true
+  template:
+    src: todo-api.service.j2
+    dest: /etc/systemd/system/todo-api.service
+    mode: '0644'
+  notify: Restart Todo API
+
+- name: Enable and start Todo API
+  become: true
+  systemd:
+    name: todo-api
+    daemon_reload: yes
+    enabled: yes
+    state: started

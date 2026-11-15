@@ -1,0 +1,7 @@
+- name: Deploy Todo API using Ansible
+  hosts: app
+  become: true
+  vars_files:
+    - roles/todo_api/vars.yml
+  roles:
+    - todo_api

@@ -1,0 +1,6 @@
+- name: Restart Todo API
+  become: true
+  systemd:
+    name: todo-api
+    daemon_reload: yes
+    state: restarted
