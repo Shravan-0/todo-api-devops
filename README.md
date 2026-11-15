@@ -30,3 +30,4 @@ mvn clean package
 ## Run
 
 java -jar target/todo-api.jar
+# Jenkins automatic CI test
